@@ -1,7 +1,7 @@
 var gl;
 
 (function() {
-  // キャンバス全体に画像を表示するために、全体を覆う板ポリゴンを使用します。
+  // キャンバス全体に画像を表示するために、板ポリゴンを使用します。
   var vertexes = [+1.0, +1.0, 0.0,
                   -1.0, +1.0, 0.0,
                   -1.0, -1.0, 0.0,
@@ -9,7 +9,7 @@ var gl;
   var polygons = [0, 2, 1,
                   0, 3, 2];
   
-  window.addEventListener('load', function() {
+  window.addEventListener('load', function() {  // テクスチャー画像の読み込みが終わってから処理を開始したいので、windowのloadイベントを使用しました。
     var canvas = document.getElementById('canvas');
     gl = canvas.getContext('webgl');
     
@@ -32,6 +32,7 @@ var gl;
 
     Leap.loop(function(frame) {
       if (frame.hands.length == 0) {
+        utilities.clearScreen();
         return;
       }
 
@@ -44,6 +45,7 @@ var gl;
       // 手のひらが積層画像の中にない場合は、何もしません。
       for (var i = 0; i < 3; ++i) {
         if (palmPosition[i] < -1.0 || 1.0 < palmPosition[i]) {
+          utilities.clearScreen();
           return;
         }
       }
