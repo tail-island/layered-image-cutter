@@ -18,8 +18,8 @@ void main(void) {
   }
   
   // 表示すべき画像の位置を、z座標から計算します。
-  float imageIndex = floor(fragmentPosition.z * 256.0);
-  vec2 imagePosition = vec2(mod(imageIndex, 16.0), floor(imageIndex / 16.0)) / vec2(16.0, 16.0);
+  float index = floor(fragmentPosition.z * 256.0);
+  vec2 imagePosition = vec2(mod(index, 16.0), floor(index / 16.0)) / vec2(16.0, 16.0);
 
   // 表示する画像の中での位置を、x座標とy座標から計算します。
   vec2 positionInImage = fragmentPosition.xy / vec2(16.0, 16.0);
