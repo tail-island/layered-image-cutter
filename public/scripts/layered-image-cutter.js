@@ -27,15 +27,37 @@ var gl = document.getElementById('canvas').getContext('webgl');
     gl.enableVertexAttribArray(positionAttribLocation);
     gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, false, 0, 0);
 
-    (function(z) {
+    Leap.loop(function(frame) {
+      if (frame.hands.length == 0) {
+        return;
+      }
+
+      var palmPosition = frame.hands[0].palmPosition;
+      vec3.add(palmPosition, palmPosition, vec3.fromValues(0.0, -200.0, 0.0));
+      vec3.divide(palmPosition, palmPosition, vec3.fromValues(100.0, 100.0, 100.0));
+
+      for (var i = 0; i < 3; ++i) {
+        if (palmPosition[i] < -1.0 || 1.0 < palmPosition[i]) {
+          return;
+        }
+      }
+
+      vec3.negate(palmPosition, palmPosition);
+      
+      var palmNormal = frame.hands[0].palmNormal;
+      var palmDirection = frame.hands[0].direction;
+
+      var palmMatrix = mat4.create();
+      mat4.lookAt(palmMatrix, vec3.fromValues(0.0, 0.0, 0.0), palmNormal, palmDirection);
+      mat4.translate(palmMatrix, palmMatrix, palmPosition);
+      mat4.invert(palmMatrix, palmMatrix);
+
+      gl.uniformMatrix4fv(gl.getUniformLocation(program, 'palmMatrix'), false, palmMatrix);
       gl.uniform2fv(gl.getUniformLocation(program, 'resolution'), [512, 512]);
-      gl.uniform1i(gl.getUniformLocation(program, 'texture'), 0);
-      gl.uniform1f(gl.getUniformLocation(program, 'z'), z);
+      gl.uniform1i(gl.getUniformLocation(program, 'layeredImage'), 0);
 
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
       gl.flush();
-
-      setTimeout(arguments.callee, 1000.0 / 60.0, (z + 1) % 512);
-    })(0);
+    });
   });
 })();

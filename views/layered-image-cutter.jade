@@ -3,7 +3,8 @@ extends layout
 block content
   canvas#canvas(width='512', height='512')
   img#texture(src='/images/sample.png')
-  script(src='/scripts/gl-matrix-min.js')
+  script(src='/libraries/gl-matrix-min.js')
+  script(src='/libraries/leap.min.js')
   script#vert(type='x-shader/x-vertex')
     include ../public/scripts/layered-image-cutter.vert
   script#frag(type='x-shader/x-fragment')
